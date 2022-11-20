@@ -6,7 +6,7 @@ import Input from '../components/input';
 import Modal from '../components/modal';
 import Button from '../components/button';
 import cloneDeep from 'lodash/cloneDeep';
-import { Sidebar, Table } from 'flowbite-react';
+import { Sidebar, Table, Tooltip } from 'flowbite-react';
 import { IoMdClose } from 'react-icons/io';
 
 import { afterSave, getStatusColor } from '../helpers';
@@ -341,18 +341,30 @@ export default function Home() {
                       <TableCell label='Serverity'>{severity}</TableCell>
                       <TableCell label='Actions'>
                         <div className='flex flex-row justify-evenly'>
-                          <FaEdit
-                            className='text-red-400 hover:text-red-700'
-                            onClick={() => openModal(i, error)}
-                          />
-                          <FaTrash
-                            onClick={() => handleDeleteError(i)}
-                            className='text-red-500 hover:text-red-700'
-                          />
-                          <FaCopy
-                            onClick={() => handleDuplicate(i)}
-                            className='text-red-500 hover:text-red-700'
-                          />
+                          <Tooltip content='Edit Error'>
+                            <FaEdit
+                              className='text-red-400 hover:text-red-700'
+                              onClick={() => openModal(i, error)}
+                            />
+                          </Tooltip>
+                          <Tooltip content='Delete Error'>
+                            <FaTrash
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteError(i);
+                              }}
+                              className='text-red-500 hover:text-red-700'
+                            />
+                          </Tooltip>
+                          <Tooltip content='Duplicate Error'>
+                            <FaCopy
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDuplicate(i);
+                              }}
+                              className='text-red-500 hover:text-red-700'
+                            />
+                          </Tooltip>
                         </div>
                       </TableCell>
                     </Table.Row>
@@ -374,11 +386,11 @@ export default function Home() {
         </div>
       </main>
       <ToastContainer
-        pauseOnFocusLoss
         autoClose={3000}
         position='bottom-center'
         theme='dark'
         closeOnClick
+        pauseOnHover={false}
       />
     </div>
   );
