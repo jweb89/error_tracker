@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
-import { FaTrash, FaPlus, FaEdit, FaCopy, X } from 'react-icons/fa';
+import { FaTrash, FaPlus, FaEdit, FaCopy } from 'react-icons/fa';
 import { AiOutlineMenu } from 'react-icons/ai';
 import Input from '../components/input';
 import Modal from '../components/modal';

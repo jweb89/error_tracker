@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { GrClose } from 'react-icons/gr';
 import { useOutsideCallback } from '../hooks/useOutsideCallback';
 import Button from './button';
