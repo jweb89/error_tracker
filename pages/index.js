@@ -78,7 +78,10 @@ export default function Home() {
     if (projectIds) {
       setProjectIds(projectIds);
     }
+    console.log('useEffect');
   }, []);
+
+  console.log(currentProject);
 
   const openModal = (i, values) => {
     setValues(values);
@@ -261,128 +264,153 @@ export default function Home() {
         </Sidebar>
 
         <div className='w-full p-2 lg:col-span-9 lg:p-5'>
-          <div className='mb-3 flex justify-between'>
-            <AiOutlineMenu
-              onClick={toggleMenu}
-              className='my-auto cursor-pointer text-4xl text-red-400 lg:hidden'
-            />
-            <Input
-              type='text'
-              className='rounded'
-              placeholder='Search title'
-              onChange={({ target }) => setSearch(target.value)}
-            />
-            {/* <Modal
+          {currentProject && project.includes(currentProject) ? (
+            <>
+              <div className='mb-3 flex justify-between'>
+                <AiOutlineMenu
+                  onClick={toggleMenu}
+                  className='my-auto cursor-pointer text-4xl text-red-400 lg:hidden'
+                />
+                <Input
+                  type='text'
+                  className='rounded'
+                  placeholder='Search title'
+                  onChange={({ target }) => setSearch(target.value)}
+                />
+                {/* <Modal
               handleAddError={handleAddError}
               TriggerComponent={(props) => ( */}
-            <Button
-              color='failure'
-              className='float-right'
-              onClick={() => openModal('new', {})}
-            >
-              Add Error
-            </Button>
-            {/* )}
+                <Button
+                  color='failure'
+                  className='float-right'
+                  onClick={() => openModal('new', {})}
+                >
+                  Add Error
+                </Button>
+                {/* )}
             /> */}
-          </div>
-          <Table className='rounded !shadow-none sm:border'>
-            <Table.Head className='!invisible !absolute bg-gray-200 sm:!visible sm:!relative'>
-              <Table.HeadCell>Title</Table.HeadCell>
-              <Table.HeadCell>Reported By</Table.HeadCell>
-              <Table.HeadCell>Reported At</Table.HeadCell>
-              <Table.HeadCell>Status</Table.HeadCell>
-              <Table.HeadCell>Severity</Table.HeadCell>
-              <Table.HeadCell>Actions</Table.HeadCell>
-            </Table.Head>
-            <Table.Body>
-              {errors?.[currentProject]
-                ?.filter((error) =>
-                  !search
-                    ? true
-                    : error.title
-                        ?.toLowerCase()
-                        ?.includes(search?.toLowerCase())
-                )
-                ?.map((error, i) => {
-                  const {
-                    id,
-                    title,
-                    reportedBy,
-                    reportedAt,
-                    status,
-                    severity,
-                  } = error;
-                  return (
-                    <Table.Row
-                      className='mb-6 flex cursor-pointer flex-row flex-wrap rounded-xl border shadow-lg hover:bg-gray-100 max-sm:hover:border-red-500 sm:mb-0 sm:table-row sm:flex-nowrap sm:shadow-none'
-                      key={id}
-                      onClick={() => openModal(i, error)}
-                    >
-                      <TableCell label='Title' labelClassName='rounded-tl-xl'>
-                        {title}
-                      </TableCell>
-                      <TableCell
-                        label='Reported By'
-                        labelClassName='rounded-tr-xl'
-                      >
-                        {reportedBy}
-                      </TableCell>
-                      <TableCell label='Reported At'>{reportedAt}</TableCell>
-                      <TableCell label='Status'>
-                        <Button
-                          pill
-                          size='xs'
-                          skipClass
-                          color={getStatusColor(status)}
-                        >
-                          {status}
-                        </Button>
-                      </TableCell>
-                      <TableCell label='Serverity'>{severity}</TableCell>
-                      <TableCell label='Actions'>
-                        <div className='flex flex-row justify-evenly'>
-                          <Tooltip content='Edit Error'>
-                            <FaEdit
-                              className='text-red-400 hover:text-red-700'
-                              onClick={() => openModal(i, error)}
-                            />
-                          </Tooltip>
-                          <Tooltip content='Delete Error'>
-                            <FaTrash
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteError(i);
-                              }}
-                              className='text-red-500 hover:text-red-700'
-                            />
-                          </Tooltip>
-                          <Tooltip content='Duplicate Error'>
-                            <FaCopy
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDuplicate(i);
-                              }}
-                              className='text-red-500 hover:text-red-700'
-                            />
-                          </Tooltip>
-                        </div>
-                      </TableCell>
-                    </Table.Row>
-                  );
-                })}
-            </Table.Body>
-          </Table>
-          <Modal
-            showModal={showModal}
-            setShowModal={setShowModal}
-            handleAddError={(values) => {
-              Number.isInteger(showModal)
-                ? handleEditError(values, showModal)
-                : handleAddError(values);
-            }}
-            values={values}
-            setValues={setValues}
-          />
+              </div>
+              <Modal
+                showModal={showModal}
+                setShowModal={setShowModal}
+                handleAddError={(values) => {
+                  Number.isInteger(showModal)
+                    ? handleEditError(values, showModal)
+                    : handleAddError(values);
+                }}
+                values={values}
+                setValues={setValues}
+              />
+              {errors?.[currentProject]?.length > 0 ? (
+                <Table className='rounded !shadow-none sm:border'>
+                  <Table.Head className='!invisible !absolute bg-gray-200 sm:!visible sm:!relative'>
+                    <Table.HeadCell>Title</Table.HeadCell>
+                    <Table.HeadCell>Reported By</Table.HeadCell>
+                    <Table.HeadCell>Reported At</Table.HeadCell>
+                    <Table.HeadCell>Status</Table.HeadCell>
+                    <Table.HeadCell>Severity</Table.HeadCell>
+                    <Table.HeadCell>Actions</Table.HeadCell>
+                  </Table.Head>
+                  <Table.Body>
+                    {errors?.[currentProject]
+                      ?.filter((error) =>
+                        !search
+                          ? true
+                          : error.title
+                              ?.toLowerCase()
+                              ?.includes(search?.toLowerCase())
+                      )
+                      ?.map((error, i) => {
+                        const {
+                          id,
+                          title,
+                          reportedBy,
+                          reportedAt,
+                          status,
+                          severity,
+                        } = error;
+                        return (
+                          <Table.Row
+                            className='mb-6 flex cursor-pointer flex-row flex-wrap rounded-xl border shadow-lg hover:bg-gray-100 max-sm:hover:border-red-500 sm:mb-0 sm:table-row sm:flex-nowrap sm:shadow-none'
+                            key={id}
+                            onClick={() => openModal(i, error)}
+                          >
+                            <TableCell
+                              label='Title'
+                              labelClassName='rounded-tl-xl'
+                            >
+                              {title}
+                            </TableCell>
+                            <TableCell
+                              label='Reported By'
+                              labelClassName='rounded-tr-xl'
+                            >
+                              {reportedBy}
+                            </TableCell>
+                            <TableCell label='Reported At'>
+                              {reportedAt}
+                            </TableCell>
+                            <TableCell label='Status'>
+                              <Button
+                                pill
+                                size='xs'
+                                skipClass
+                                color={getStatusColor(status)}
+                              >
+                                {status}
+                              </Button>
+                            </TableCell>
+                            <TableCell label='Serverity'>{severity}</TableCell>
+                            <TableCell label='Actions'>
+                              <div className='flex flex-row justify-evenly'>
+                                <Tooltip content='Edit Error'>
+                                  <FaEdit
+                                    className='text-red-400 hover:text-red-700'
+                                    onClick={() => openModal(i, error)}
+                                  />
+                                </Tooltip>
+                                <Tooltip content='Delete Error'>
+                                  <FaTrash
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteError(i);
+                                    }}
+                                    className='text-red-500 hover:text-red-700'
+                                  />
+                                </Tooltip>
+                                <Tooltip content='Duplicate Error'>
+                                  <FaCopy
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDuplicate(i);
+                                    }}
+                                    className='text-red-500 hover:text-red-700'
+                                  />
+                                </Tooltip>
+                              </div>
+                            </TableCell>
+                          </Table.Row>
+                        );
+                      })}
+                  </Table.Body>
+                </Table>
+              ) : (
+                <div className='flex flex-col items-center justify-center'>
+                  <h1 className='text-2xl font-bold text-gray-500'>
+                    No errors found
+                  </h1>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className='flex flex-col items-center justify-center'>
+              <h1 className='text-2xl font-bold text-gray-500'>
+                {project?.length > 0
+                  ? 'Please select a proejct'
+                  : 'Create a project to get started'}
+              </h1>
+            </div>
+          )}
         </div>
       </main>
       <ToastContainer

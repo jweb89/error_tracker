@@ -14,7 +14,7 @@ export default function Modal({
   const modalRef = useRef(null);
 
   useOutsideCallback(modalRef, () => {
-    if (showModal) setShowModal(false);
+    if (showModal || showModal === 0) setShowModal(false);
   });
 
   const handleChange = ({ target }) => {
@@ -32,8 +32,7 @@ export default function Modal({
   };
 
   return (
-    showModal &&
-    showModal !== 0 && (
+    (showModal || showModal === 0) && (
       <>
         <form
           onSubmit={handleSubmit}
