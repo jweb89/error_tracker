@@ -46,6 +46,7 @@ const TableCell = ({
 export default function Home() {
   const [project, setProject] = useState([]);
   const [projectIds, setProjectIds] = useState({});
+  const [projectInputLocation, setProjectInputLocation] = useState('');
   const [projectInput, setProjectInput] = useState('');
   const [errors, setErrors] = useState({});
   const [currentProject, setCurrentProject] = useState(null);
@@ -78,10 +79,7 @@ export default function Home() {
     if (projectIds) {
       setProjectIds(projectIds);
     }
-    console.log('useEffect');
   }, []);
-
-  console.log(currentProject);
 
   const openModal = (i, values) => {
     setValues(values);
@@ -98,7 +96,10 @@ export default function Home() {
     const newErrors = cloneDeep(errors);
     delete newErrors[projectName];
     setErrors(newErrors);
-
+    if (currentProject === projectName) {
+      setCurrentProject(null);
+      afterSave('currentProject', null);
+    }
     afterSave('errors', newErrors);
     afterSave('project', newProject);
     toast.success('Project deleted');
@@ -214,7 +215,7 @@ export default function Home() {
         >
           <div className='h-full w-full' ref={menuRef}>
             <IoMdClose
-              className='float-right -mb-5 cursor-pointer text-3xl text-white'
+              className='float-right -mb-5 cursor-pointer text-3xl text-white lg:hidden'
               onClick={toggleMenu}
             />
             <Sidebar.Logo
@@ -240,7 +241,12 @@ export default function Home() {
                     >
                       <div className='flex items-center justify-between text-white'>
                         {project}
-                        <FaTrash onClick={() => handleDelete(project)} />
+                        <FaTrash
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(project);
+                          }}
+                        />
                       </div>
                     </Sidebar.Item>
                   );
@@ -249,8 +255,11 @@ export default function Home() {
                   <input
                     className='mr-3 w-full appearance-none border-none bg-transparent py-1 px-0 leading-tight text-white placeholder:text-gray-200 focus:outline-none focus:ring-0 focus:ring-offset-0'
                     type='text'
-                    onChange={handleChange}
-                    value={projectInput}
+                    onChange={(e) => {
+                      setProjectInputLocation('top');
+                      handleChange(e);
+                    }}
+                    value={projectInputLocation === 'top' ? projectInput : ''}
                     placeholder='My project'
                     aria-label='Project name'
                   />
@@ -264,150 +273,158 @@ export default function Home() {
         </Sidebar>
 
         <div className='w-full p-2 lg:col-span-9 lg:p-5'>
-          {currentProject && project.includes(currentProject) ? (
-            <>
-              <div className='mb-3 flex justify-between'>
-                <AiOutlineMenu
-                  onClick={toggleMenu}
-                  className='my-auto cursor-pointer text-4xl text-red-400 lg:hidden'
-                />
-                <Input
-                  type='text'
-                  className='rounded'
-                  placeholder='Search title'
-                  onChange={({ target }) => setSearch(target.value)}
-                />
-                {/* <Modal
-              handleAddError={handleAddError}
-              TriggerComponent={(props) => ( */}
-                <Button
-                  color='failure'
-                  className='float-right'
-                  onClick={() => openModal('new', {})}
-                >
-                  Add Error
-                </Button>
-                {/* )}
-            /> */}
-              </div>
-              <Modal
-                showModal={showModal}
-                setShowModal={setShowModal}
-                handleAddError={(values) => {
-                  Number.isInteger(showModal)
-                    ? handleEditError(values, showModal)
-                    : handleAddError(values);
-                }}
-                values={values}
-                setValues={setValues}
-              />
-              {errors?.[currentProject]?.length > 0 ? (
-                <Table className='rounded !shadow-none sm:border'>
-                  <Table.Head className='!invisible !absolute bg-gray-200 sm:!visible sm:!relative'>
-                    <Table.HeadCell>Title</Table.HeadCell>
-                    <Table.HeadCell>Reported By</Table.HeadCell>
-                    <Table.HeadCell>Reported At</Table.HeadCell>
-                    <Table.HeadCell>Status</Table.HeadCell>
-                    <Table.HeadCell>Severity</Table.HeadCell>
-                    <Table.HeadCell>Actions</Table.HeadCell>
-                  </Table.Head>
-                  <Table.Body>
-                    {errors?.[currentProject]
-                      ?.filter((error) =>
-                        !search
-                          ? true
-                          : error.title
-                              ?.toLowerCase()
-                              ?.includes(search?.toLowerCase())
-                      )
-                      ?.map((error, i) => {
-                        const {
-                          id,
-                          title,
-                          reportedBy,
-                          reportedAt,
-                          status,
-                          severity,
-                        } = error;
-                        return (
-                          <Table.Row
-                            className='mb-6 flex cursor-pointer flex-row flex-wrap rounded-xl border shadow-lg hover:bg-gray-100 max-sm:hover:border-red-500 sm:mb-0 sm:table-row sm:flex-nowrap sm:shadow-none'
-                            key={id}
-                            onClick={() => openModal(i, error)}
+          <div className='mb-3 flex justify-between'>
+            <AiOutlineMenu
+              onClick={toggleMenu}
+              className='my-auto cursor-pointer text-4xl text-red-400 lg:hidden'
+            />
+            <Input
+              type='text'
+              className='rounded'
+              placeholder='Search title'
+              onChange={({ target }) => setSearch(target.value)}
+            />
+            <Button
+              color='failure'
+              className='float-right'
+              onClick={() => openModal('new', {})}
+              disabled={!currentProject}
+            >
+              Add Error
+            </Button>
+          </div>
+          <Modal
+            showModal={showModal}
+            setShowModal={setShowModal}
+            handleAddError={(values) => {
+              Number.isInteger(showModal)
+                ? handleEditError(values, showModal)
+                : handleAddError(values);
+            }}
+            values={values}
+            setValues={setValues}
+          />
+          {errors?.[currentProject]?.length > 0 &&
+          currentProject &&
+          project.includes(currentProject) ? (
+            <Table className='rounded !shadow-none sm:border'>
+              <Table.Head className='!invisible !absolute bg-gray-200 sm:!visible sm:!relative'>
+                <Table.HeadCell>Title</Table.HeadCell>
+                <Table.HeadCell>Reported By</Table.HeadCell>
+                <Table.HeadCell>Reported At</Table.HeadCell>
+                <Table.HeadCell>Status</Table.HeadCell>
+                <Table.HeadCell>Severity</Table.HeadCell>
+                <Table.HeadCell>Actions</Table.HeadCell>
+              </Table.Head>
+              <Table.Body>
+                {errors?.[currentProject]
+                  ?.filter((error) =>
+                    !search
+                      ? true
+                      : error.title
+                          ?.toLowerCase()
+                          ?.includes(search?.toLowerCase())
+                  )
+                  ?.map((error, i) => {
+                    const {
+                      id,
+                      title,
+                      reportedBy,
+                      reportedAt,
+                      status,
+                      severity,
+                    } = error;
+                    return (
+                      <Table.Row
+                        className='mb-6 flex cursor-pointer flex-row flex-wrap rounded-xl border shadow-lg hover:bg-gray-100 max-sm:hover:border-red-500 sm:mb-0 sm:table-row sm:flex-nowrap sm:shadow-none'
+                        key={id}
+                        onClick={() => openModal(i, error)}
+                      >
+                        <TableCell label='Title' labelClassName='rounded-tl-xl'>
+                          {title}
+                        </TableCell>
+                        <TableCell
+                          label='Reported By'
+                          labelClassName='rounded-tr-xl'
+                        >
+                          {reportedBy}
+                        </TableCell>
+                        <TableCell label='Reported At'>{reportedAt}</TableCell>
+                        <TableCell label='Status'>
+                          <Button
+                            pill
+                            size='xs'
+                            skipClass
+                            color={getStatusColor(status)}
                           >
-                            <TableCell
-                              label='Title'
-                              labelClassName='rounded-tl-xl'
-                            >
-                              {title}
-                            </TableCell>
-                            <TableCell
-                              label='Reported By'
-                              labelClassName='rounded-tr-xl'
-                            >
-                              {reportedBy}
-                            </TableCell>
-                            <TableCell label='Reported At'>
-                              {reportedAt}
-                            </TableCell>
-                            <TableCell label='Status'>
-                              <Button
-                                pill
-                                size='xs'
-                                skipClass
-                                color={getStatusColor(status)}
-                              >
-                                {status}
-                              </Button>
-                            </TableCell>
-                            <TableCell label='Serverity'>{severity}</TableCell>
-                            <TableCell label='Actions'>
-                              <div className='flex flex-row justify-evenly'>
-                                <Tooltip content='Edit Error'>
-                                  <FaEdit
-                                    className='text-red-400 hover:text-red-700'
-                                    onClick={() => openModal(i, error)}
-                                  />
-                                </Tooltip>
-                                <Tooltip content='Delete Error'>
-                                  <FaTrash
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteError(i);
-                                    }}
-                                    className='text-red-500 hover:text-red-700'
-                                  />
-                                </Tooltip>
-                                <Tooltip content='Duplicate Error'>
-                                  <FaCopy
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDuplicate(i);
-                                    }}
-                                    className='text-red-500 hover:text-red-700'
-                                  />
-                                </Tooltip>
-                              </div>
-                            </TableCell>
-                          </Table.Row>
-                        );
-                      })}
-                  </Table.Body>
-                </Table>
-              ) : (
-                <div className='flex flex-col items-center justify-center'>
-                  <h1 className='text-2xl font-bold text-gray-500'>
-                    No errors found
-                  </h1>
-                </div>
-              )}
-            </>
+                            {status}
+                          </Button>
+                        </TableCell>
+                        <TableCell label='Serverity'>{severity}</TableCell>
+                        <TableCell label='Actions'>
+                          <div className='flex flex-row justify-evenly'>
+                            <Tooltip content='Edit Error'>
+                              <FaEdit
+                                className='text-red-400 hover:text-red-700'
+                                onClick={() => openModal(i, error)}
+                              />
+                            </Tooltip>
+                            <Tooltip content='Delete Error'>
+                              <FaTrash
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteError(i);
+                                }}
+                                className='text-red-500 hover:text-red-700'
+                              />
+                            </Tooltip>
+                            <Tooltip content='Duplicate Error'>
+                              <FaCopy
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDuplicate(i);
+                                }}
+                                className='text-red-500 hover:text-red-700'
+                              />
+                            </Tooltip>
+                          </div>
+                        </TableCell>
+                      </Table.Row>
+                    );
+                  })}
+              </Table.Body>
+            </Table>
           ) : (
             <div className='flex flex-col items-center justify-center'>
               <h1 className='text-2xl font-bold text-gray-500'>
-                {project?.length > 0
-                  ? 'Please select a proejct'
-                  : 'Create a project to get started'}
+                {!currentProject ? (
+                  <>
+                    Create {project?.length > 0 && 'or select'} a project
+                    <div className='flex items-center justify-between border-b border-gray-500 py-2 px-5'>
+                      <input
+                        className='mr-3 w-full appearance-none border-none bg-transparent py-1 px-0 leading-tight text-gray-500 placeholder:text-gray-200 focus:outline-none focus:ring-0 focus:ring-offset-0'
+                        type='text'
+                        onChange={(e) => {
+                          setProjectInputLocation('bottom');
+                          handleChange(e);
+                        }}
+                        value={
+                          projectInputLocation === 'bottom' ? projectInput : ''
+                        }
+                        placeholder='My project'
+                        aria-label='Project name'
+                      />
+                      <button
+                        onClick={handleAddProject}
+                        disabled={!projectInput}
+                      >
+                        <FaPlus className='my-auto cursor-pointer text-gray-500' />
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  'No errors found'
+                )}
               </h1>
             </div>
           )}
