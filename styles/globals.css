@@ -28,3 +28,12 @@ a {
     background: black;
   }
 }
+
+.required:after {
+  content: ' *';
+  color: red;
+}
+
+input:focus-visible {
+  outline: none !important;
+}

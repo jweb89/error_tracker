@@ -9,13 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "clsx": "^1.2.1",
     "eslint": "8.27.0",
     "eslint-config-next": "13.0.3",
+    "flowbite": "^1.5.4",
+    "flowbite-react": "^0.3.5",
     "lodash": "^4.17.21",
     "next": "13.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-icons": "^4.6.0"
+    "react-icons": "^4.6.0",
+    "react-toastify": "^9.1.1"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
