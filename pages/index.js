@@ -294,7 +294,7 @@ export default function Home() {
               type='text'
               className='rounded'
               placeholder='Search title'
-              addOn={<FaSearch className='text-red-400' />}
+              addOn={<FaSearch className='text-white' />}
               onChange={({ target }) => setSearch(target.value)}
             />
             <Button

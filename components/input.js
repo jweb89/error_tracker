@@ -29,7 +29,7 @@ export default ({ label, name, className, type, addOn, ...props }) => {
       )}
       <div className='flex'>
         {addOn && (
-          <span class='inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-200 px-3 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-400'>
+          <span class='inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-red-400 px-3 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-400'>
             {addOn}
           </span>
         )}
