@@ -46,7 +46,9 @@ export default function Modal({
             <div className='relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none'>
               {/*header*/}
               <div className='flex items-start justify-between rounded-t border-b border-solid border-slate-200 p-5'>
-                <h3 className='text-3xl font-semibold'>Add Error</h3>
+                <h3 className='text-3xl font-semibold'>
+                  {showModal === 'new' ? 'Add Error' : 'Edit Error'}
+                </h3>
                 <button
                   className='float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black  outline-none focus:outline-none'
                   onClick={() => setShowModal(false)}

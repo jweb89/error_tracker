@@ -1,12 +1,12 @@
 import Head from 'next/head';
 import { useEffect, useRef, useState } from 'react';
-import { FaTrash, FaPlus, FaEdit, FaCopy } from 'react-icons/fa';
+import { FaTrash, FaPlus, FaEdit, FaCopy, FaSearch } from 'react-icons/fa';
 import { AiOutlineMenu } from 'react-icons/ai';
 import Input from '../components/input';
 import Modal from '../components/modal';
 import Button from '../components/button';
 import cloneDeep from 'lodash/cloneDeep';
-import { Sidebar, Table, Tooltip } from 'flowbite-react';
+import { Badge, Sidebar, Table, Tooltip } from 'flowbite-react';
 import { IoMdClose } from 'react-icons/io';
 
 import { afterSave, getStatusColor } from '../helpers';
@@ -189,11 +189,23 @@ export default function Home() {
     afterSave('currentProject', project);
   };
 
+  const getErrors = () => {
+    return errors?.[currentProject]?.filter((error) =>
+      !search
+        ? true
+        : error.title?.toLowerCase()?.includes(search?.toLowerCase())
+    );
+  };
+
   return (
     <div>
       <Head>
         <title>Error Tracker</title>
         <meta name='description' content='Error Tracker' />
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1, maximum-scale=1'
+        />
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
@@ -282,6 +294,7 @@ export default function Home() {
               type='text'
               className='rounded'
               placeholder='Search title'
+              addOn={<FaSearch className='text-red-400' />}
               onChange={({ target }) => setSearch(target.value)}
             />
             <Button
@@ -317,81 +330,71 @@ export default function Home() {
                 <Table.HeadCell>Actions</Table.HeadCell>
               </Table.Head>
               <Table.Body>
-                {errors?.[currentProject]
-                  ?.filter((error) =>
-                    !search
-                      ? true
-                      : error.title
-                          ?.toLowerCase()
-                          ?.includes(search?.toLowerCase())
-                  )
-                  ?.map((error, i) => {
-                    const {
-                      id,
-                      title,
-                      reportedBy,
-                      reportedAt,
-                      status,
-                      severity,
-                    } = error;
-                    return (
-                      <Table.Row
-                        className='mb-6 flex cursor-pointer flex-row flex-wrap rounded-xl border shadow-lg hover:bg-gray-100 max-sm:hover:border-red-500 sm:mb-0 sm:table-row sm:flex-nowrap sm:shadow-none'
-                        key={id}
-                        onClick={() => openModal(i, error)}
+                {getErrors().map((error, i) => {
+                  const {
+                    id,
+                    title,
+                    reportedBy,
+                    reportedAt,
+                    status,
+                    severity,
+                  } = error;
+                  return (
+                    <Table.Row
+                      className='mb-6 flex cursor-pointer flex-row flex-wrap rounded-xl border shadow-lg hover:bg-gray-100 max-sm:hover:border-red-500 sm:mb-0 sm:table-row sm:flex-nowrap sm:shadow-none'
+                      key={id}
+                      onClick={() => openModal(i, error)}
+                    >
+                      <TableCell label='Title' labelClassName='rounded-tl-xl'>
+                        {title}
+                      </TableCell>
+                      <TableCell
+                        label='Reported By'
+                        labelClassName='rounded-tr-xl'
                       >
-                        <TableCell label='Title' labelClassName='rounded-tl-xl'>
-                          {title}
-                        </TableCell>
-                        <TableCell
-                          label='Reported By'
-                          labelClassName='rounded-tr-xl'
+                        {reportedBy}
+                      </TableCell>
+                      <TableCell label='Reported At'>{reportedAt}</TableCell>
+                      <TableCell label='Status'>
+                        <Badge
+                          className='justify-center'
+                          color={getStatusColor(status)}
                         >
-                          {reportedBy}
-                        </TableCell>
-                        <TableCell label='Reported At'>{reportedAt}</TableCell>
-                        <TableCell label='Status'>
-                          <Button
-                            pill
-                            size='xs'
-                            skipClass
-                            color={getStatusColor(status)}
-                          >
-                            {status}
-                          </Button>
-                        </TableCell>
-                        <TableCell label='Serverity'>{severity}</TableCell>
-                        <TableCell label='Actions'>
-                          <div className='flex flex-row justify-evenly'>
-                            <Tooltip content='Edit Error'>
-                              <FaEdit
-                                className='text-red-400 hover:text-red-700'
-                                onClick={() => openModal(i, error)}
-                              />
-                            </Tooltip>
-                            <Tooltip content='Delete Error'>
-                              <FaTrash
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteError(i);
-                                }}
-                                className='text-red-500 hover:text-red-700'
-                              />
-                            </Tooltip>
-                            <Tooltip content='Duplicate Error'>
-                              <FaCopy
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDuplicate(i);
-                                }}
-                                className='text-red-500 hover:text-red-700'
-                              />
-                            </Tooltip>
-                          </div>
-                        </TableCell>
-                      </Table.Row>
-                    );
-                  })}
+                          {status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell label='Serverity'>{severity}</TableCell>
+                      <TableCell label='Actions'>
+                        <div className='flex flex-row justify-evenly'>
+                          <Tooltip content='Edit Error'>
+                            <FaEdit
+                              className='text-red-400 hover:text-red-700'
+                              onClick={() => openModal(i, error)}
+                            />
+                          </Tooltip>
+                          <Tooltip content='Delete Error'>
+                            <FaTrash
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteError(i);
+                              }}
+                              className='text-red-500 hover:text-red-700'
+                            />
+                          </Tooltip>
+                          <Tooltip content='Duplicate Error'>
+                            <FaCopy
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDuplicate(i);
+                              }}
+                              className='text-red-500 hover:text-red-700'
+                            />
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                    </Table.Row>
+                  );
+                })}
               </Table.Body>
             </Table>
           ) : (

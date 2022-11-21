@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 const getComponent = (type) => {
   switch (type) {
     case 'option':
@@ -9,7 +11,7 @@ const getComponent = (type) => {
   }
 };
 
-export default ({ label, name, className, type, ...props }) => {
+export default ({ label, name, className, type, addOn, ...props }) => {
   const Component = getComponent(type);
 
   return (
@@ -25,14 +27,23 @@ export default ({ label, name, className, type, ...props }) => {
           {label}
         </label>
       )}
-      <Component
-        className={
-          'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-red-500 focus:ring-red-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-red-500 dark:focus:ring-red-500 ' +
-          className
-        }
-        name={name}
-        {...props}
-      />
+      <div className='flex'>
+        {addOn && (
+          <span class='inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-200 px-3 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-600 dark:text-gray-400'>
+            {addOn}
+          </span>
+        )}
+
+        <Component
+          className={clsx(
+            'block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-red-500 focus:ring-red-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-red-500 dark:focus:ring-red-500',
+            addOn && 'rounded-none rounded-r-lg',
+            className
+          )}
+          name={name}
+          {...props}
+        />
+      </div>
     </div>
   );
 };
