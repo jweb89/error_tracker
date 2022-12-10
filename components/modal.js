@@ -57,7 +57,7 @@ export default function Modal({
                 </button>
               </div>
               {/*body*/}
-              <div className='col relative grid flex-auto gap-5 p-6'>
+              <div className='col relative grid flex-auto gap-1 p-6'>
                 <Input
                   type='text'
                   placeholder='My first bug'
@@ -121,6 +121,20 @@ export default function Modal({
                     <option value='Completed'>Completed</option>
                   </Input>
                 </div>
+                <Input
+                  onChange={handleChange}
+                  required
+                  value={values.environment}
+                  type='option'
+                  name='environment'
+                  label='Environment'
+                >
+                  <option value='' selected disabled>
+                    Select
+                  </option>
+                  <option value='pre-production'>Pre-Production</option>
+                  <option value='production'>Production</option>
+                </Input>
                 <Input
                   required
                   onChange={handleChange}
