@@ -410,12 +410,12 @@ export default function Home() {
             />
             <div className='order-3 my-auto mt-3 w-full text-center font-bold md:order-none md:w-auto'>
               DRE:{' '}
-              {(errors?.[currentProject]?.reduce((acc, error) => {
+              {errors?.[currentProject]?.reduce((acc, error) => {
                 if (error.environment === 'pre-production') return acc + 1;
                 return acc;
               }, 0) /
-                (errors?.[currentProject]?.length || Number.MAX_SAFE_INTEGER)) *
-                100}{' '}
+                (errors?.[currentProject]?.length || Number.MAX_SAFE_INTEGER) ||
+                0 * 100}{' '}
               % | Total: {errors?.[currentProject]?.length || 0}
             </div>
             <Button
