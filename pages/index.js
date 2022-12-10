@@ -396,7 +396,7 @@ export default function Home() {
           </div>
         </Sidebar>
         <div className='w-full p-2 lg:col-span-9 lg:p-5'>
-          <div className='mb-3 flex justify-between'>
+          <div className='mb-3 flex flex-wrap justify-between md:flex-nowrap'>
             <AiOutlineMenu
               onClick={toggleMenu}
               className='my-auto cursor-pointer text-4xl text-red-400 lg:hidden'
@@ -408,7 +408,7 @@ export default function Home() {
               addOn={<FaSearch className='text-white' />}
               onChange={({ target }) => setSearch(target.value)}
             />
-            <div className='my-auto font-bold'>
+            <div className='order-3 my-auto mt-3 w-full text-center font-bold md:order-none md:w-auto'>
               DRE:{' '}
               {(errors?.[currentProject]?.reduce((acc, error) => {
                 if (error.environment === 'pre-production') return acc + 1;
