@@ -246,6 +246,19 @@ export default function Home() {
     );
   };
 
+  const getDre = () => {
+    if (!errors?.[currentProject]) return 0;
+
+    return (
+      (errors?.[currentProject]?.reduce((acc, error) => {
+        if (error.environment === 'pre-production') return acc + 1;
+        return acc;
+      }, 0) /
+        errors?.[currentProject]?.length) *
+      100
+    ).toFixed(2);
+  };
+
   return (
     <div>
       <Head>
@@ -409,14 +422,7 @@ export default function Home() {
               onChange={({ target }) => setSearch(target.value)}
             />
             <div className='order-3 my-auto mt-3 w-full text-center font-bold md:order-none md:w-auto'>
-              DRE:{' '}
-              {errors?.[currentProject]?.reduce((acc, error) => {
-                if (error.environment === 'pre-production') return acc + 1;
-                return acc;
-              }, 0) /
-                (errors?.[currentProject]?.length || Number.MAX_SAFE_INTEGER) ||
-                0 * 100}{' '}
-              % | Total: {errors?.[currentProject]?.length || 0}
+              DRE: {getDre()} % | Total: {errors?.[currentProject]?.length || 0}
             </div>
             <Button
               color='failure'
