@@ -525,7 +525,13 @@ export default function Home() {
                   })}
                 </Table.Body>
               </Table>
-              <CSVLink data={errors?.[currentProject] || []}>
+              <CSVLink
+                filename={`${currentProject}_errors.csv`}
+                data={errors?.[currentProject] || []}
+                onClick={() => {
+                  toast.success('Exported to CSV');
+                }}
+              >
                 <Button color='primary' className='float-right mt-5'>
                   Export to CSV
                 </Button>
