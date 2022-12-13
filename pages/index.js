@@ -369,19 +369,23 @@ export default function Home() {
                         <div className='flex items-center justify-between text-white'>
                           {projectItem}
                           <span className='flex flex-row gap-2'>
-                            <FaEdit
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setEditProject(projectItem);
-                                setEditProjectInput(projectItem);
-                              }}
-                            />
-                            <FaTrash
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(projectItem);
-                              }}
-                            />
+                            <Tooltip content='Edit Name'>
+                              <FaEdit
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditProject(projectItem);
+                                  setEditProjectInput(projectItem);
+                                }}
+                              />
+                            </Tooltip>
+                            <Tooltip content='Delete Project'>
+                              <FaTrash
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(projectItem);
+                                }}
+                              />
+                            </Tooltip>
                           </span>
                         </div>
                       )}
