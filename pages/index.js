@@ -262,7 +262,7 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Error Tracker</title>
+        <title>Error Tracker1</title>
         <meta name='description' content='Error Tracker' />
         <meta
           name='viewport'
@@ -297,7 +297,7 @@ export default function Home() {
               imgAlt='error tracker logo'
               className='mb-3 min-w-full font-mono text-2xl font-bold text-white'
             >
-              Error Tracker
+              Error Tracker11111
             </Sidebar.Logo>
 
             <Sidebar.Items>
